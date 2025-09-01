@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Main</title>
+        <link rel="stylesheet" href="{{ url_for('static', path='/styles.css') }}">
+    </head>
+    <body>
+        <div class = "content_wrap">
+            <h1>Weather Journal is an app for weather forecast</h1>
+            <form class = "search_bar" action="/submit" method="post">
+                <input class = "main_input" placeholder = "Weather Journal is an app for weather forecast" type="text" name="city" id="city" required>
+                <button class = "search_button" type="submit">Search</button>
+            </form>
+        </div>
+        <footer></footer>
+    </body>
+</html>

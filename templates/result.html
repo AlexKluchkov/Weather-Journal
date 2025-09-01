@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Result</title>
+        <link rel="stylesheet" href="{{ url_for('static', path='/styles.css') }}">
+    </head>
+    <body>
+        <header></header>
+        <div class = "content_wrap">
+            <a href="/">Back</a>
+            {% for item in five_day_weather_forecast %}
+                <p>{{ item }}</p>
+            {% endfor %}
+        </div>
+    </body>
+</html>
