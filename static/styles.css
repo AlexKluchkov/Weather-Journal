@@ -8,35 +8,71 @@ body {
     background-color:cyan;
 }
 
-header{
-    background-color: wheat;
-    height: 100px;
+.header{
+    display: grid;
+    grid-auto-flow: column; 
+    margin: 1% 4% 0% 5%;
 }
 
-.content_wrap{
-    margin: 10% 5%;
-    padding: 20px;
-    display: grid;
+.logo{
+    border-style: solid;
+    border-color: gray;
+}
+
+.menu_item{
     background-color:white;
+    border-style: solid;
+    border-color:whitesmoke;
+    margin-top: 10px;
+    
+    display: grid;
+    place-items: center; /* сразу и вертикально, и горизонтально */
+    height: 45px;
 }
 
 .search_bar{
-    padding: 25px 10px;
+    margin: 10px 10px;
+    
 }
 
-.main_input{
-    height: 30px;
+.input_bar{
+    height: 45px;
     width: 80%;
 }
 
 .search_button{
-    height: 30px;
-    width: 60px;
+    height: 45px;
+    width: 80px;
+}
+
+.content_wrap{
+    margin: 0% 5%;
+    padding: 20px;
+    border-radius: 5%;
+    background-color:white;
+}
+
+.five_day_forecast
+{
+    display: flex;
+}
+
+.day_forecast
+{
+    margin-right: 5px;
+    border-style: solid;
+    border-color:darkgray;
+}
+
+.weather_icon
+{
+    height: 40px;
+    width: 40px;
 }
 
 footer{
     background-color: black;
-    margin: 50px 0px;
+    margin-top: 15%;
     height: 200px;
     width: 100%;
 }
