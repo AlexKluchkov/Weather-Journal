@@ -1,0 +1,4 @@
+{
+  "devtools_page": "https://example.com/devtools.html",
+  "websocket_debugger_url": "ws://localhost:9222/devtools/page/1"
+}
