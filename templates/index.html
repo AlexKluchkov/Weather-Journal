@@ -8,7 +8,7 @@
         <dev class="header">
             <img class="logo" src = "{{ url_for('static', path='/logo.png') }}">
             <a class="menu_item" href="/">Main</a>
-            <a class="menu_item" href="/">Map</a>
+            <a class="menu_item" href="/weather-for-the-day">Three hour weather</a>
             <form class = "search_bar" action="/submit" method="post">
                 <input class = "input_bar" placeholder = "Weather Journal is an app for weather forecast." type="text" name="city" id="city" required>
                 <button class = "search_button" type="submit">Search</button>
@@ -19,31 +19,18 @@
             <h2>Weather in {{ my_city }}</h2>
             <div class = "five_day_forecast">
                 {% for item in weather_forecast_date %}
-                    {% if weather_forecast_description[loop.index0] == "clear sky" %}
-                        <div class="day_forecast">
+                    <div class="day_forecast">
+                        {% if weather_forecast_description[loop.index0] == "clear sky" %}
                             <img class="weather_icon" title="{{weather_forecast_description[loop.index0]}}" src = "{{ url_for('static', path='/sunny.png') }}">
-                            <p>{{ item }} {{weather_forecast_temperature[loop.index0]}}</p>
-                        </div>
-                    {% elif weather_forecast_description[loop.index0] == "overcast clouds" %}
-                        <div class="day_forecast">
+                        {% elif weather_forecast_description[loop.index0] == "overcast clouds" %}
                             <img class="weather_icon" title="{{weather_forecast_description[loop.index0]}}" src = "{{ url_for('static', path='/cloudy.png') }}">
-                            <p>{{ item }} {{weather_forecast_temperature[loop.index0]}}</p>
-                        </div>
-                    {% elif weather_forecast_description[loop.index0] == "broken clouds" or weather_forecast_description[loop.index0] == "scattered clouds" or weather_forecast_description[loop.index0] == "few clouds" %}
-                        <div class="day_forecast">
+                        {% elif weather_forecast_description[loop.index0] == "broken clouds" or weather_forecast_description[loop.index0] == "scattered clouds" or weather_forecast_description[loop.index0] == "few clouds" %}
                             <img class="weather_icon" title="{{weather_forecast_description[loop.index0]}}" src = "{{ url_for('static', path='/broken_clouds.png') }}">
-                            <p>{{ item }} {{weather_forecast_temperature[loop.index0]}}</p>
-                        </div>
-                    {% elif weather_forecast_description[loop.index0] == "light rain" or weather_forecast_description[loop.index0] == "heavy rain" or weather_forecast_description[loop.index0] == "moderate rain" %}
-                        <div class="day_forecast">
+                        {% elif weather_forecast_description[loop.index0] == "light rain" or weather_forecast_description[loop.index0] == "heavy rain" or weather_forecast_description[loop.index0] == "moderate rain" %}
                             <img class="weather_icon" title="{{weather_forecast_description[loop.index0]}}" src = "{{ url_for('static', path='/raining.png') }}">
-                            <p>{{ item }} {{weather_forecast_temperature[loop.index0]}}</p>
-                        </div>
-                    {% else %}
-                        <div class="day_forecast">
-                            <p>{{ item }} {{weather_forecast_temperature[loop.index0]}} {{weather_forecast_description[loop.index0]}}</p>
-                        </div>
-                    {% endif %}
+                        {% endif %}
+                        <p>{{ item }} <br> {{weather_forecast_temperature[loop.index0]}}</p>
+                    </div>
                 {% endfor %}
                 
             </div>
