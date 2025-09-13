@@ -15,8 +15,7 @@ body {
 }
 
 .logo{
-    border-style: solid;
-    border-color: gray;
+    margin-bottom: 10px;
 }
 
 .menu_item{
@@ -60,6 +59,7 @@ body {
 .day_forecast
 {
     margin-right: 5px;
+    height: 200px;
     border-style: solid;
     border-color:darkgray;
 }
@@ -76,3 +76,5 @@ footer{
     height: 200px;
     width: 100%;
 }
+
+
