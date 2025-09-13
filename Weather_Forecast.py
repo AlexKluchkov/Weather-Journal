@@ -19,7 +19,7 @@ async def show_form(request: Request):
     client_host = request.client.host     # When uploading to the server, uncomment
     # client_host = "8.8.8.8"                 # When uploading to the server, comment
     
-    # Обращаемся к бесплатному API для определения геолокации
+    # turn to a free API for determining geolocation
     async with httpx.AsyncClient() as client:
         resp = await client.get(f"http://ip-api.com/json/{client_host}?fields=status,country,regionName,city,lat,lon,query")
         my_city = resp.json()["city"]
@@ -50,3 +50,4 @@ async def result_page(request: Request):
 
     three_hours_weather_forecast_date, three_hours_weather_forecast_temperature, three_hours_weather_forecast_description = WeatherForecast.get_three_hours_weather_forecast(city)
     return templates.TemplateResponse("index.html", {"request": request, "my_city": city, "weather_forecast_date": three_hours_weather_forecast_date, "weather_forecast_temperature": three_hours_weather_forecast_temperature,  "weather_forecast_description": three_hours_weather_forecast_description})
+
