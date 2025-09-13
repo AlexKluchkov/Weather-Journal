@@ -1,53 +1,53 @@
-import requests
+from fastapi import FastAPI, Request, Form
+from fastapi.templating import Jinja2Templates
+from fastapi.responses import HTMLResponse, RedirectResponse
+from urllib.parse import urlencode
+import httpx
+import Weather_Forecast
+from fastapi.staticfiles import StaticFiles
 
-from collections import defaultdict
-from datetime import datetime
+app = FastAPI()
+app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount("/.well-known", StaticFiles(directory=".well-known"), name="well-known")
+templates = Jinja2Templates(directory="templates")
+WeatherForecast = Weather_Forecast.Weather_Forecast()
 
-class Weather_Forecast(object):
-    weather_API = "58e3b566e5bed0958072fca73566c81f"
+
+@app.get("/", response_class=HTMLResponse)
+async def show_form(request: Request):
+
+    client_host = request.client.host     # When uploading to the server, uncomment
+    # client_host = "8.8.8.8"                 # When uploading to the server, comment
     
-    def get_three_hours_weather_forecast(self, CITY):
-        weather_url = f"https://api.openweathermap.org/data/2.5/forecast?q={CITY}&appid={self.weather_API}&units=metric&lang=en"
-        #
-        response = requests.get(weather_url)
-        data = response.json()
+    # Обращаемся к бесплатному API для определения геолокации
+    async with httpx.AsyncClient() as client:
+        resp = await client.get(f"http://ip-api.com/json/{client_host}?fields=status,country,regionName,city,lat,lon,query")
+        my_city = resp.json()["city"]
 
-        weather_forecast_date = []
-        weather_forecast_temperature = []
-        weather_forecast_description = []
-        for item in data["list"][:10]:  # max 10 records
-            date = datetime.fromtimestamp(item["dt"])
-            temp = item["main"]["temp"]
-            desc = item["weather"][0]["description"]
-            weather_forecast_date.append(f"{date.strftime("%H:%M:%S")}")
-            weather_forecast_temperature.append(f"{temp} C")
-            weather_forecast_description.append(f"{desc}")
-        return weather_forecast_date, weather_forecast_temperature, weather_forecast_description
+    five_day_weather_forecast_date, five_day_weather_forecast_temperature, five_day_weather_forecast_description = WeatherForecast.get_five_day_weather_forecast(my_city)
 
+    return templates.TemplateResponse("index.html", {"request": request, "my_city": my_city, "weather_forecast_date": five_day_weather_forecast_date, "weather_forecast_temperature": five_day_weather_forecast_temperature, "weather_forecast_description": five_day_weather_forecast_description})
 
-    def get_five_day_weather_forecast(self, CITY):
-        weather_url = f"https://api.openweathermap.org/data/2.5/forecast?q={CITY}&appid={self.weather_API}&units=metric&lang=en"
-        #One Call API
-        response = requests.get(weather_url)
-        data = response.json()
+@app.post("/submit")
+def submit_query(request: Request, city: str = Form(...)):
+    params = urlencode({"city": city})
+    return RedirectResponse(url=f"/result?{params}", status_code=303)
 
-        #
-        forecast_by_day = defaultdict(list)
+@app.get("/result", response_class=HTMLResponse)
+def result_page(request: Request, city: str):
+    five_day_weather_forecast_date, five_day_weather_forecast_temperature, five_day_weather_forecast_description = WeatherForecast.get_five_day_weather_forecast(city)
+    return templates.TemplateResponse("index.html", {"request": request, "my_city": city, "weather_forecast_date": five_day_weather_forecast_date, "weather_forecast_temperature": five_day_weather_forecast_temperature, "weather_forecast_description": five_day_weather_forecast_description})
 
-        for item in data["list"]:
-            date = datetime.fromtimestamp(item["dt"]).date()
-            temp = item["main"]["temp"]
-            desc = item["weather"][0]["description"]
-            forecast_by_day[date].append((temp, desc))
-        
-        five_day_weather_forecast_date = []
-        five_day_weather_forecast_temperature = []
-        five_day_weather_forecast_description = []
-        for date, values in list(forecast_by_day.items())[:5]:  # max 5 days
-            min_temp = min(v[0] for v in values)
-            max_temp = max(v[0] for v in values)
-            descs = [v[1] for v in values]
-            five_day_weather_forecast_date.append(f"{date}")
-            five_day_weather_forecast_temperature.append(f" {min_temp:.1f} C {max_temp:.1f} C")
-            five_day_weather_forecast_description.append(f"{descs[0]}")
-        return five_day_weather_forecast_date, five_day_weather_forecast_temperature, five_day_weather_forecast_description
+@app.get("/weather-for-the-day", response_class=HTMLResponse)
+async def result_page(request: Request):
+
+    client_host = request.client.host     # When uploading to the server, uncomment
+    # client_host = "8.8.8.8"                 # When uploading to the server, comment
+    
+    # We turn to a free API for determining geolocation
+    async with httpx.AsyncClient() as client:
+        resp = await client.get(f"http://ip-api.com/json/{client_host}?fields=status,country,regionName,city,lat,lon,query")
+        city = resp.json()["city"]
+
+    three_hours_weather_forecast_date, three_hours_weather_forecast_temperature, three_hours_weather_forecast_description = WeatherForecast.get_three_hours_weather_forecast(city)
+    return templates.TemplateResponse("index.html", {"request": request, "my_city": city, "weather_forecast_date": three_hours_weather_forecast_date, "weather_forecast_temperature": three_hours_weather_forecast_temperature,  "weather_forecast_description": three_hours_weather_forecast_description})
