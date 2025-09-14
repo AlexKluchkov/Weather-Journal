@@ -1,10 +1,11 @@
 import requests
+import os
 
 from collections import defaultdict
 from datetime import datetime
 
 class Weather_Forecast(object):
-    weather_API = "58e3b566e5bed0958072fca73566c81f"
+    weather_API = os.getenv("weather_forecast_API")
     
     def get_three_hours_weather_forecast(self, CITY):
         weather_url = f"https://api.openweathermap.org/data/2.5/forecast?q={CITY}&appid={self.weather_API}&units=metric&lang=en"
@@ -51,3 +52,4 @@ class Weather_Forecast(object):
             five_day_weather_forecast_temperature.append(f" {min_temp:.1f} C {max_temp:.1f} C")
             five_day_weather_forecast_description.append(f"{descs[0]}")
         return five_day_weather_forecast_date, five_day_weather_forecast_temperature, five_day_weather_forecast_description
+
