@@ -1,3 +1,4 @@
+import os
 import requests
 
 from collections import defaultdict
@@ -58,3 +59,4 @@ class Weather_Forecast(object):
         return five_day_weather_forecast_date, five_day_weather_forecast_temperature, five_day_weather_forecast_description
 
     
+
