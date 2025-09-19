@@ -14,10 +14,9 @@ app.mount("/.well-known", StaticFiles(directory=".well-known"), name="well-known
 templates = Jinja2Templates(directory="templates")
 WeatherForecast = Weather_Forecast.Weather_Forecast()
 
-client_host = request.client.host     # When uploading to the server, uncomment
-# client_host = "8.8.8.8"                 # When not uploading to the server, uncomment
-
 def my_geolocetion(request):
+    client_host = request.client.host     # When uploading to the server, uncomment
+    # client_host = "8.8.8.8"                 # When not uploading to the server, uncomment
     response = requests.get(f"http://ip-api.com/json/{client_host}?fields=city,country,query")
     data = response.json()
     return data.get("city")
@@ -45,3 +44,4 @@ async def result_page(request: Request):
     city = my_geolocetion(request)
     three_hours_weather_forecast_date, three_hours_weather_forecast_temperature, three_hours_weather_forecast_description = WeatherForecast.get_three_hours_weather_forecast(city)
     return templates.TemplateResponse("index.html", {"request": request, "my_city": city, "weather_forecast_date": three_hours_weather_forecast_date, "weather_forecast_temperature": three_hours_weather_forecast_temperature,  "weather_forecast_description": three_hours_weather_forecast_description})
+
