@@ -6,26 +6,26 @@ import httpx
 import Weather_Forecast
 from fastapi.staticfiles import StaticFiles
 
+import requests
+
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 app.mount("/.well-known", StaticFiles(directory=".well-known"), name="well-known")
 templates = Jinja2Templates(directory="templates")
 WeatherForecast = Weather_Forecast.Weather_Forecast()
 
+client_host = request.client.host     # When uploading to the server, uncomment
+# client_host = "8.8.8.8"                 # When not uploading to the server, uncomment
+
+def my_geolocetion(request):
+    response = requests.get(f"http://ip-api.com/json/{client_host}?fields=city,country,query")
+    data = response.json()
+    return data.get("city")
 
 @app.get("/", response_class=HTMLResponse)
-async def show_form(request: Request):
-
-    client_host = request.client.host     # When uploading to the server, uncomment
-    # client_host = "8.8.8.8"                 # When uploading to the server, comment
-    
-    # turn to a free API for determining geolocation
-    async with httpx.AsyncClient() as client:
-        resp = await client.get(f"http://ip-api.com/json/{client_host}?fields=status,country,regionName,city,lat,lon,query")
-        my_city = resp.json()["city"]
-
+def show_form(request: Request): 
+    my_city = my_geolocetion(request)
     five_day_weather_forecast_date, five_day_weather_forecast_temperature, five_day_weather_forecast_description = WeatherForecast.get_five_day_weather_forecast(my_city)
-
     return templates.TemplateResponse("index.html", {"request": request, "my_city": my_city, "weather_forecast_date": five_day_weather_forecast_date, "weather_forecast_temperature": five_day_weather_forecast_temperature, "weather_forecast_description": five_day_weather_forecast_description})
 
 @app.post("/submit")
@@ -36,19 +36,12 @@ def submit_query(request: Request, city: str = Form(...)):
 @app.get("/result", response_class=HTMLResponse)
 def result_page(request: Request, city: str):
     five_day_weather_forecast_date, five_day_weather_forecast_temperature, five_day_weather_forecast_description = WeatherForecast.get_five_day_weather_forecast(city)
+    if(five_day_weather_forecast_description == 'city not found'):
+        return RedirectResponse(url="/")
     return templates.TemplateResponse("index.html", {"request": request, "my_city": city, "weather_forecast_date": five_day_weather_forecast_date, "weather_forecast_temperature": five_day_weather_forecast_temperature, "weather_forecast_description": five_day_weather_forecast_description})
 
 @app.get("/weather-for-the-day", response_class=HTMLResponse)
 async def result_page(request: Request):
-
-    client_host = request.client.host     # When uploading to the server, uncomment
-    # client_host = "8.8.8.8"                 # When uploading to the server, comment
-    
-    # turn to a free API for determining geolocation
-    async with httpx.AsyncClient() as client:
-        resp = await client.get(f"http://ip-api.com/json/{client_host}?fields=status,country,regionName,city,lat,lon,query")
-        city = resp.json()["city"]
-
+    city = my_geolocetion(request)
     three_hours_weather_forecast_date, three_hours_weather_forecast_temperature, three_hours_weather_forecast_description = WeatherForecast.get_three_hours_weather_forecast(city)
     return templates.TemplateResponse("index.html", {"request": request, "my_city": city, "weather_forecast_date": three_hours_weather_forecast_date, "weather_forecast_temperature": three_hours_weather_forecast_temperature,  "weather_forecast_description": three_hours_weather_forecast_description})
-
