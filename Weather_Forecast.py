@@ -1,5 +1,4 @@
 import requests
-import os
 
 from collections import defaultdict
 from datetime import datetime
@@ -9,10 +8,13 @@ class Weather_Forecast(object):
     
     def get_three_hours_weather_forecast(self, CITY):
         weather_url = f"https://api.openweathermap.org/data/2.5/forecast?q={CITY}&appid={self.weather_API}&units=metric&lang=en"
-        #
         response = requests.get(weather_url)
         data = response.json()
+        
+        if(data == {'cod': '404', 'message': 'city not found'}):
+            return None, None, 'city not found'
 
+            
         weather_forecast_date = []
         weather_forecast_temperature = []
         weather_forecast_description = []
@@ -28,10 +30,12 @@ class Weather_Forecast(object):
 
     def get_five_day_weather_forecast(self, CITY):
         weather_url = f"https://api.openweathermap.org/data/2.5/forecast?q={CITY}&appid={self.weather_API}&units=metric&lang=en"
-        #
+
         response = requests.get(weather_url)
         data = response.json()
-
+        
+        if(data == {'cod': '404', 'message': 'city not found'}):
+            return None, None, 'city not found'
         # 
         forecast_by_day = defaultdict(list)
 
@@ -53,5 +57,4 @@ class Weather_Forecast(object):
             five_day_weather_forecast_description.append(f"{descs[0]}")
         return five_day_weather_forecast_date, five_day_weather_forecast_temperature, five_day_weather_forecast_description
 
-
-
+    
