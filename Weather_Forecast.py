@@ -19,7 +19,7 @@ class Weather_Forecast(object):
         weather_forecast_date = []
         weather_forecast_temperature = []
         weather_forecast_description = []
-        for item in data["list"][:10]:  # max 10 records
+        for item in data["list"][:40]:  # max 40 records
             date = datetime.fromtimestamp(item["dt"])
             temp = item["main"]["temp"]
             desc = item["weather"][0]["description"]
@@ -59,4 +59,5 @@ class Weather_Forecast(object):
         return five_day_weather_forecast_date, five_day_weather_forecast_temperature, five_day_weather_forecast_description
 
     
+
 
