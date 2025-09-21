@@ -37,6 +37,7 @@ body {
 .input_bar{
     height: 45px;
     width: 80%;
+    border-radius: 15%;
 }
 
 .search_button{
@@ -53,7 +54,16 @@ body {
 
 .five_day_forecast
 {
+    position: relative;
+    width: 1000px;
+    height: 200px;
+    overflow: hidden;
+}
+.weather_forecast
+{
+    
     display: flex;
+    transition: transform 0.5s ease-in-out;
 }
 
 .day_forecast
@@ -62,7 +72,10 @@ body {
     height: 200px;
     border-style: solid;
     border-color:darkgray;
+    min-width: 100px;
 }
+
+
 
 .weather_icon
 {
@@ -76,5 +89,4 @@ footer{
     height: 200px;
     width: 100%;
 }
-
 
