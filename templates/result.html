@@ -1,16 +1,70 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Result</title>
+        <title>Weather Journal</title>
         <link rel="stylesheet" href="{{ url_for('static', path='/styles.css') }}">
     </head>
     <body>
-        <header></header>
-        <div class = "content_wrap">
-            <a href="/">Back</a>
-            {% for item in five_day_weather_forecast %}
-                <p>{{ item }}</p>
-            {% endfor %}
+        <div class="header">
+            <img class="logo" src = "{{ url_for('static', path='/logo.png') }}">
+            <a class="menu_item" href="/">Main</a>
+            <a class="menu_item" href="/weather-for-the-day">Three hour weather</a>
+            <form class = "search_bar" action="/submit" method="post">
+                <input class = "input_bar" placeholder = "Weather Journal is an app for weather forecast." type="text" name="city" id="city" required>
+                <button class = "search_button" type="submit">Search</button>
+            </form>
         </div>
+        <div class = "content_wrap">
+            <h1>Weather Journal is an app for weather forecast</h1>
+            <h2>Weather in {{ my_city }}</h2>
+            <div class = "five_day_forecast">
+                <div class = "weather_forecast">
+                    {% set ns = namespace(j=0) %}
+                    {% for item in weather_forecast_time %}
+                        <div class="day_forecast">
+                            {% if "clear" in weather_forecast_description[loop.index0] %}
+                                <img class="weather_icon" title="{{weather_forecast_description[loop.index0]}}" src = "{{ url_for('static', path='/sunny.png') }}">
+                            {% elif weather_forecast_description[loop.index0] == "overcast clouds" %}
+                                <img class="weather_icon" title="{{weather_forecast_description[loop.index0]}}" src = "{{ url_for('static', path='/cloudy.png') }}">
+                            {% elif "clouds" in weather_forecast_description[loop.index0] %}
+                                <img class="weather_icon" title="{{weather_forecast_description[loop.index0]}}" src = "{{ url_for('static', path='/broken_clouds.png') }}">
+                            {% elif "rain" in weather_forecast_description[loop.index0] %}
+                                <img class="weather_icon" title="{{weather_forecast_description[loop.index0]}}" src = "{{ url_for('static', path='/raining.png') }}">
+                            {%else%}
+                                <p>{{weather_forecast_description[loop.index0]}}</p>
+                            {% endif %}
+                            <p>{{ item }} <br> {{weather_forecast_temperature[loop.index0]}}</p>
+                        </div>
+                        {% if "21:00:" in item %}
+                                <div class="day_forecast">
+                                    <p>{{weather_forecast_date[ns.j]}}</p>
+                                </div>
+                                {% set ns.j = ns.j + 1 %}
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+            <button class="prev">&#10094;</button>
+            <button class="next">&#10095;</button>
+        </div>
+        <footer></footer>
+        <script>
+                const slides = document.querySelector('.weather_forecast');
+                const images = document.querySelectorAll('.weather_forecast .day_forecast');
+                const prevBtn = document.querySelector('.prev');
+                const nextBtn = document.querySelector('.next');
+
+                let index = 0;
+
+                function showSlide(i) {
+                if (i < 0) index = (images.length / 4) - 1;
+                else if (i >= (images.length / 4)) index = 0;
+                else index = i;
+                slides.style.transform = `translateX(${-index * 400}px)`; // 200px = ширина одного блока
+                }
+
+                prevBtn.addEventListener('click', () => showSlide(index - 1));
+                nextBtn.addEventListener('click', () => showSlide(index + 1));
+        </script>
     </body>
 </html>
