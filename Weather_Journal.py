@@ -16,7 +16,6 @@ WeatherForecast = Weather_Forecast.Weather_Forecast()
 
 def my_geolocetion(request):
     client_host = request.client.host     # When uploading to the server, uncomment
-    # client_host = "8.8.8.8"                 # When not uploading to the server, uncomment
     response = requests.get(f"http://ip-api.com/json/{client_host}?fields=city,country,query")
     data = response.json()
     return data.get("city")
@@ -40,8 +39,7 @@ def result_page(request: Request, city: str):
     return templates.TemplateResponse("index.html", {"request": request, "my_city": city, "weather_forecast_date": five_day_weather_forecast_date, "weather_forecast_temperature": five_day_weather_forecast_temperature, "weather_forecast_description": five_day_weather_forecast_description})
 
 @app.get("/weather-for-the-day", response_class=HTMLResponse)
-async def result_page(request: Request):
+async def weather_for_the_day_page(request: Request):
     city = my_geolocetion(request)
-    three_hours_weather_forecast_date, three_hours_weather_forecast_temperature, three_hours_weather_forecast_description = WeatherForecast.get_three_hours_weather_forecast(city)
-    return templates.TemplateResponse("index.html", {"request": request, "my_city": city, "weather_forecast_date": three_hours_weather_forecast_date, "weather_forecast_temperature": three_hours_weather_forecast_temperature,  "weather_forecast_description": three_hours_weather_forecast_description})
-
+    three_hours_weather_forecast_time, three_hours_weather_forecast_temperature, three_hours_weather_forecast_description, three_hours_weather_forecast_date = WeatherForecast.get_three_hours_weather_forecast(city)
+    return templates.TemplateResponse("result.html", {"request": request, "my_city": city, "weather_forecast_time": three_hours_weather_forecast_time, "weather_forecast_temperature": three_hours_weather_forecast_temperature,  "weather_forecast_description": three_hours_weather_forecast_description, "weather_forecast_date": three_hours_weather_forecast_date})
