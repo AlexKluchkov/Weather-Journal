@@ -5,7 +5,7 @@ from collections import defaultdict
 from datetime import datetime
 
 class Weather_Forecast(object):
-    weather_API = os.getenv("weather_forecast_API")
+    weather_API = os.getenv("weather_forecast_API") # When uploading to the server, uncomment
     
     def get_three_hours_weather_forecast(self, CITY):
         weather_url = f"https://api.openweathermap.org/data/2.5/forecast?q={CITY}&appid={self.weather_API}&units=metric&lang=en"
@@ -15,29 +15,30 @@ class Weather_Forecast(object):
         if(data == {'cod': '404', 'message': 'city not found'}):
             return None, None, 'city not found'
 
-            
-        weather_forecast_date = []
+        weather_forecast_time = [] 
         weather_forecast_temperature = []
         weather_forecast_description = []
-        for item in data["list"][:40]:  # max 40 records
+        weather_forecast_date = []
+        for item in data["list"][:40]:  # max 10 records
             date = datetime.fromtimestamp(item["dt"])
             temp = item["main"]["temp"]
             desc = item["weather"][0]["description"]
-            weather_forecast_date.append(f"{date.strftime("%H:%M:%S")}")
+            weather_forecast_time.append(f"{date.strftime("%H:%M:%S")}")
             weather_forecast_temperature.append(f"{temp} C")
             weather_forecast_description.append(f"{desc}")
-        return weather_forecast_date, weather_forecast_temperature, weather_forecast_description
+            if(date.strftime("%H")=="00"):
+                weather_forecast_date.append(f"{date.strftime("%d %B, %A")}")
+        return weather_forecast_time, weather_forecast_temperature, weather_forecast_description, weather_forecast_date
 
 
     def get_five_day_weather_forecast(self, CITY):
         weather_url = f"https://api.openweathermap.org/data/2.5/forecast?q={CITY}&appid={self.weather_API}&units=metric&lang=en"
-
         response = requests.get(weather_url)
         data = response.json()
         
         if(data == {'cod': '404', 'message': 'city not found'}):
             return None, None, 'city not found'
-        # 
+        
         forecast_by_day = defaultdict(list)
 
         for item in data["list"]:
@@ -59,5 +60,3 @@ class Weather_Forecast(object):
         return five_day_weather_forecast_date, five_day_weather_forecast_temperature, five_day_weather_forecast_description
 
     
-
-
