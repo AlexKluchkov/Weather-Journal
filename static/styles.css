@@ -5,7 +5,10 @@
 }
 
 body {
-    background-color:cyan;
+    background-image: url("/static/background.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
 }
 
 .header{
@@ -75,8 +78,6 @@ body {
     min-width: 100px;
 }
 
-
-
 .weather_icon
 {
     height: 40px;
@@ -89,4 +90,3 @@ footer{
     height: 200px;
     width: 100%;
 }
-
