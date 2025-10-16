@@ -26,20 +26,32 @@ def show_form(request: Request):
     five_day_weather_forecast_date, five_day_weather_forecast_temperature, five_day_weather_forecast_description = WeatherForecast.get_five_day_weather_forecast(my_city)
     return templates.TemplateResponse("index.html", {"request": request, "my_city": my_city, "weather_forecast_date": five_day_weather_forecast_date, "weather_forecast_temperature": five_day_weather_forecast_temperature, "weather_forecast_description": five_day_weather_forecast_description})
 
-@app.post("/submit")
-def submit_query(request: Request, city: str = Form(...)):
+@app.post("/submit_five_day_forecast")
+def submit_query_five_day_forecast(request: Request, city: str = Form(...)):
     params = urlencode({"city": city})
-    return RedirectResponse(url=f"/result?{params}", status_code=303)
+    return RedirectResponse(url=f"/weather_for_the_five_day?{params}", status_code=303)
 
-@app.get("/result", response_class=HTMLResponse)
-def result_page(request: Request, city: str):
+@app.get("/weather_for_the_five_day", response_class=HTMLResponse)
+def five_day_weather_forecast_page(request: Request, city: str):
     five_day_weather_forecast_date, five_day_weather_forecast_temperature, five_day_weather_forecast_description = WeatherForecast.get_five_day_weather_forecast(city)
     if(five_day_weather_forecast_description == 'city not found'):
         return RedirectResponse(url="/")
     return templates.TemplateResponse("index.html", {"request": request, "my_city": city, "weather_forecast_date": five_day_weather_forecast_date, "weather_forecast_temperature": five_day_weather_forecast_temperature, "weather_forecast_description": five_day_weather_forecast_description})
 
-@app.get("/weather-for-the-day", response_class=HTMLResponse)
+@app.get("/hourly_weather_forecast", response_class=HTMLResponse)
 async def weather_for_the_day_page(request: Request):
     city = my_geolocetion(request)
     three_hours_weather_forecast_time, three_hours_weather_forecast_temperature, three_hours_weather_forecast_description, three_hours_weather_forecast_date = WeatherForecast.get_three_hours_weather_forecast(city)
+    return templates.TemplateResponse("result.html", {"request": request, "my_city": city, "weather_forecast_time": three_hours_weather_forecast_time, "weather_forecast_temperature": three_hours_weather_forecast_temperature,  "weather_forecast_description": three_hours_weather_forecast_description, "weather_forecast_date": three_hours_weather_forecast_date})
+
+@app.post("/submit_hourly_forecasts")
+def submit_query_hourly_forecasts(request: Request, city: str = Form(...)):
+    params = urlencode({"city": city})
+    return RedirectResponse(url=f"/hourly_weather_forecasts?{params}", status_code=303)
+
+@app.get("/hourly_weather_forecasts", response_class=HTMLResponse)
+async def weather_for_the_day_page(request: Request, city: str):
+    three_hours_weather_forecast_time, three_hours_weather_forecast_temperature, three_hours_weather_forecast_description, three_hours_weather_forecast_date = WeatherForecast.get_three_hours_weather_forecast(city)
+    if(three_hours_weather_forecast_description == 'city not found'):
+        return RedirectResponse(url="/hourly_weather_forecast")
     return templates.TemplateResponse("result.html", {"request": request, "my_city": city, "weather_forecast_time": three_hours_weather_forecast_time, "weather_forecast_temperature": three_hours_weather_forecast_temperature,  "weather_forecast_description": three_hours_weather_forecast_description, "weather_forecast_date": three_hours_weather_forecast_date})
