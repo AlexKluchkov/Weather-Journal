@@ -9,7 +9,7 @@
             <img class="logo" src = "{{ url_for('static', path='/logo.png') }}">
             <a class="menu_item" href="/">Main</a>
             <a class="menu_item" href="/hourly_weather_forecast">Three hour weather</a>
-            <form class = "search_bar" action="/submit2" method="post">
+            <form class = "search_bar" action="/submit_hourly_forecasts" method="post">
                 <input class = "input_bar" placeholder = "Weather Journal is an app for weather forecast." type="text" name="city" id="city" required>
                 <button class = "search_button" type="submit">Search</button>
             </form>
@@ -68,4 +68,5 @@
         </script>
     </body>
 </html>
+
 
